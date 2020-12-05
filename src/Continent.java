@@ -1,3 +1,4 @@
+import java.io.Serializable;
 import java.util.*;
 
 /**
@@ -6,7 +7,7 @@ import java.util.*;
  *
  * @author Nicolas Tuttle
  */
-public class Continent {
+public class Continent implements Serializable {
     private final String name;
     private final List<Territory> territories;
 

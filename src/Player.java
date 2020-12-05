@@ -1,3 +1,4 @@
+import java.io.Serializable;
 import java.util.*;
 
 /**
@@ -8,7 +9,7 @@ import java.util.*;
  *
  * @author Phuc La
  */
-public class Player {
+public class Player implements Serializable {
     private final String name;
     private final boolean AI;
     private final List<Territory> ownedlands;

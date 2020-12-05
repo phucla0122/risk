@@ -50,7 +50,7 @@ public class GameFrame extends JFrame implements GameView{
 
                 //checks if name is already used
                 for (String nameCheck : playerNames.keySet()) {
-                    if (nameCheck.toLowerCase().equals(pnp.getPlayerName().toLowerCase())) {
+                    if (nameCheck.equalsIgnoreCase(pnp.getPlayerName())) {
                         validInput = false;
                         JOptionPane.showMessageDialog(pnp,"Name is already used");
                         break;

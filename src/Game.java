@@ -1,3 +1,4 @@
+import java.io.Serializable;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -7,7 +8,7 @@ import java.util.stream.Collectors;
  *
  * @author Nicolas Tuttle, Phuc La, Robell Gabriel, Jacob Schmidt
  */
-public class Game {
+public class Game implements Serializable {
     private final List<Player> activePlayers;
     private final Map<String, Continent> continents;
     private Player currentPlayer;
@@ -488,6 +489,25 @@ public class Game {
         } else {
             passTurn();
         }
+    }
+
+    /**
+     * Saves current game state into a file
+     *
+     * @param file name of game file
+     */
+    public void saveGame(String file){
+
+    }
+
+    /**
+     * Loads a saved game state from a file into current game/new game
+     *
+     * @param file name of saved game file
+     * @return true if file exists, false otherwise
+     */
+    public boolean loadGame(String file){
+        return true;
     }
 
     /**

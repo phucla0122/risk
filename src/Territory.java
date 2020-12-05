@@ -1,3 +1,4 @@
+import java.io.Serializable;
 import java.util.*;
 
 /** the class Territory represents a territory in the risk game identifiable by a Name and ID that can be read.
@@ -6,7 +7,7 @@ import java.util.*;
  *
  * @author Jacob Schmidt
  */
-public class Territory {
+public class Territory implements Serializable {
     private Player owner; // owner of the country
     private int numArmies = 0; //amount of armies contained in the country
     private final String name; //name to identify country by
