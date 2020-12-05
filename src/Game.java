@@ -1,4 +1,4 @@
-import java.io.Serializable;
+import java.io.*;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -9,10 +9,10 @@ import java.util.stream.Collectors;
  * @author Nicolas Tuttle, Phuc La, Robell Gabriel, Jacob Schmidt
  */
 public class Game implements Serializable {
-    private final List<Player> activePlayers;
-    private final Map<String, Continent> continents;
+    private List<Player> activePlayers;
+    private Map<String, Continent> continents;
     private Player currentPlayer;
-    private final ArrayList<GameView> gameViews;
+    private ArrayList<GameView> gameViews;
     private boolean isFirstTurn;
 
     public enum Status {ATTACK, PLACE, DISABLE, DONE, PASS}
@@ -494,10 +494,14 @@ public class Game implements Serializable {
     /**
      * Saves current game state into a file
      *
-     * @param file name of game file
+     *
      */
-    public void saveGame(String file){
-
+    public void saveGame() throws IOException {
+        FileOutputStream gameSaveFile = new FileOutputStream("RISK.sav");
+        ObjectOutputStream risk = new ObjectOutputStream(gameSaveFile);
+        risk.writeObject(this);
+        risk.close();
+        gameSaveFile.close();
     }
 
     /**
@@ -506,8 +510,26 @@ public class Game implements Serializable {
      * @param file name of saved game file
      * @return true if file exists, false otherwise
      */
-    public boolean loadGame(String file){
-        return true;
+    public boolean loadGame(String file) {
+        try {
+            FileInputStream gameFile = new FileInputStream("RISK.sav");
+            ObjectInputStream gameObjin = new ObjectInputStream(gameFile);
+            Game risk = (Game) gameObjin.readObject();
+            currentPlayer = risk.getCurrentPlayer();
+            activePlayers = risk.getActivePlayers();
+            continents = risk.getContinents();
+            gameViews = risk.getGameView();
+            isFirstTurn = risk.getIsFirstTurn();
+            status = risk.getStatus();
+            return true;
+        }catch (FileNotFoundException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        } catch (ClassNotFoundException e) {
+            e.printStackTrace();
+        }
+        return false;
     }
 
     /**
@@ -578,5 +600,19 @@ public class Game implements Serializable {
      */
     public void addGameView(GameView view){
         gameViews.add(view);
+    }
+
+    /**
+     *
+     */
+    public ArrayList<GameView> getGameView(){
+        return gameViews;
+    }
+    /**
+     * Get the status of the game if it is the first turn.
+     * @return true if it is first turn and false other wise
+     */
+    public boolean getIsFirstTurn(){
+        return isFirstTurn;
     }
 }
