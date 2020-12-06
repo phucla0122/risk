@@ -1,6 +1,10 @@
 import javax.swing.*;
 import javax.swing.tree.DefaultMutableTreeNode;
 import java.awt.*;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.*;
 import java.util.List;
 
@@ -18,6 +22,7 @@ public class GameFrame extends JFrame implements GameView{
     private final JLabel playerTurn;
     private final DefaultListModel<String> leaderBoardList;
     private final JButton attack,move,done,place;
+    private JList<String> leaderBoard;
 
     /**
      * constructor of the GameFrame that initializes the view of the GameModel
@@ -28,6 +33,14 @@ public class GameFrame extends JFrame implements GameView{
         super("RISK!");
 
         Game game  = new Game();
+        //TextArea to show the log
+        actionLog = new JTextArea();
+        actionLog.setEditable(false);
+        actionLog.setRows(20);
+        JScrollPane actionLogScroll = new JScrollPane(actionLog);
+        actionLogScroll.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED);
+        JLabel actionLogLabel = new JLabel("Action log");
+        actionLogLabel.setSize(10, 10);
         game.addGameView(this);
         String[] gameOptions = {"New Game", "Load Game", "Custom Map"};
         int result;
@@ -42,6 +55,11 @@ public class GameFrame extends JFrame implements GameView{
                 if (!game.loadGame()){
                     JOptionPane.showMessageDialog(this, "There is no saved game");
                 }else{
+                    try {
+                        loadActionLog();
+                    } catch (FileNotFoundException fileNotFoundException) {
+                        fileNotFoundException.printStackTrace();
+                    }
                     break;
                 }
             }else if (result == JOptionPane.CANCEL_OPTION){
@@ -96,7 +114,7 @@ public class GameFrame extends JFrame implements GameView{
         for (Player player : activePlayers) {
             leaderBoardList.addElement(player.getName() + " owns " + player.getAllLandOwnedSize() + " territories");
         }
-        JList<String> leaderBoard = new JList<>(leaderBoardList);
+        leaderBoard = new JList<>(leaderBoardList);
         JLabel leaderBoardLabel = new JLabel("Leaderboard");
         leaderBoardLabel.setVerticalAlignment(JLabel.BOTTOM);
 
@@ -117,14 +135,7 @@ public class GameFrame extends JFrame implements GameView{
         place.addActionListener(gc);
         place.setActionCommand(place.getText());
 
-        //TextArea to show the log
-        actionLog = new JTextArea();
-        actionLog.setEditable(false);
-        actionLog.setRows(20);
-        JScrollPane actionLogScroll = new JScrollPane(actionLog);
-        actionLogScroll.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED);
-        JLabel actionLogLabel = new JLabel("Action log");
-        actionLogLabel.setSize(10, 10);
+
         //disable all buttons until place phase is done
         attack.setEnabled(false);
         move.setEnabled(false);
@@ -181,6 +192,7 @@ public class GameFrame extends JFrame implements GameView{
        Game.Status status = game.getStatus();
 
         resetMap(continents);
+        resetLeaderBoard(game);
         switch (status) {
             case PLACE:
                 place.setEnabled(false);
@@ -243,6 +255,18 @@ public class GameFrame extends JFrame implements GameView{
         }
     }
 
+    /**
+     * This method will reset the leaderboard when the player load old game.
+     * @param game is the game object of the loaded match
+     */
+    private void resetLeaderBoard(Game game){
+        List<Player> activePlayers = game.getActivePlayers();
+        leaderBoardList.clear();
+        for (Player player : activePlayers) {
+            leaderBoardList.addElement(player.getName() + " owns " + player.getAllLandOwnedSize() + " territories");
+        }
+        leaderBoard = new JList<>(leaderBoardList);
+    }
     /**
      * Updates the leaderboard as the game progresses (IE: attack territory and conquer the land)
      * Checks if there's a winner
@@ -332,5 +356,32 @@ public class GameFrame extends JFrame implements GameView{
     public void printLine(String str) {
         actionLog.append(str + "\n");
         actionLog.setCaretPosition(actionLog.getDocument().getLength());
+    }
+
+    /**
+     * This method save the action log of the game into an sav file.
+     * @throws IOException if the file cannot be saved
+     */
+    public void saveActionLog() throws IOException {
+        FileWriter fw = new FileWriter("Actionlog.sav");
+        for(String line : actionLog.getText().split("\n")){
+            fw.write(line + "\n");
+        }
+        fw.close();
+    }
+
+    /**
+     * This method load the action log of the loaded game file to the action log text area.
+     * @throws FileNotFoundException
+     */
+    public void loadActionLog() throws FileNotFoundException {
+        File file = new File("Actionlog.sav");
+        Scanner sc = new Scanner(file);
+        actionLog.removeAll();
+        while(sc.hasNextLine()){
+            String act = sc.nextLine();
+            printLine(act);
+        }
+        actionLog.append("\n");
     }
 }
