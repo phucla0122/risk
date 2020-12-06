@@ -493,8 +493,6 @@ public class Game implements Serializable {
 
     /**
      * Saves current game state into a file
-     *
-     *
      */
     public void saveGame() throws IOException {
         FileOutputStream gameSaveFile = new FileOutputStream("RISK.sav");
@@ -507,10 +505,9 @@ public class Game implements Serializable {
     /**
      * Loads a saved game state from a file into current game/new game
      *
-     * @param file name of saved game file
      * @return true if file exists, false otherwise
      */
-    public boolean loadGame(String file) {
+    public boolean loadGame() {
         try {
             FileInputStream gameFile = new FileInputStream("RISK.sav");
             ObjectInputStream gameObjin = new ObjectInputStream(gameFile);
@@ -518,17 +515,16 @@ public class Game implements Serializable {
             currentPlayer = risk.getCurrentPlayer();
             activePlayers = risk.getActivePlayers();
             continents = risk.getContinents();
-            gameViews = risk.getGameView();
             isFirstTurn = risk.getIsFirstTurn();
             status = risk.getStatus();
             return true;
-        }catch (FileNotFoundException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
-        } catch (ClassNotFoundException e) {
+        } catch (ClassNotFoundException | IOException e) {
             e.printStackTrace();
         }
+        return false;
+    }
+
+    public boolean loadCustomMap() {
         return false;
     }
 

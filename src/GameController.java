@@ -1,5 +1,6 @@
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
+import java.io.IOException;
 import java.util.Random;
 import javax.swing.*;
 
@@ -31,12 +32,24 @@ public class GameController implements ActionListener {
      */
     @Override
     public void actionPerformed(ActionEvent e) {
-        Object o = e.getSource();
-        JButton button = (JButton) o;
         Player player = game.getCurrentPlayer();
 
         //if place button is pressed pull up a PlacePanel to get input from user and update model accordingly
-        switch (button.getText()) {
+        switch (e.getActionCommand()) {
+            case "Load Game":{
+                if (!game.loadGame()){
+                    JOptionPane.showMessageDialog(gameView, "There is no saved game");
+                }
+                break;
+            }
+            case "Save Game":{
+                try {
+                    game.saveGame();
+                } catch (IOException ioException) {
+                    ioException.printStackTrace();
+                }
+                break;
+            }
             case "Place": {
                 int result;
                 PlacePanel plp = new PlacePanel(player, game.getContinents());

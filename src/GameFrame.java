@@ -12,7 +12,7 @@ import java.util.List;
  */
 public class GameFrame extends JFrame implements GameView{
     private final String[] options = {"OK"};
-    private final JTextArea actionLog;
+    private JTextArea actionLog;
     private final DefaultMutableTreeNode mapList;
     private final JTree map;
     private final JLabel playerTurn;
@@ -27,60 +27,53 @@ public class GameFrame extends JFrame implements GameView{
     public GameFrame() {
         super("RISK!");
 
-        //welcome panel of risk game
-        WelcomePanel wp = new WelcomePanel();
+        Game game  = new Game();
+        game.addGameView(this);
+        String[] gameOptions = {"New Game", "Load Game", "Custom Map"};
         int result;
-        do {
-            result = JOptionPane.showOptionDialog(this, wp, "Welcome",
+        while (true){
+            result = JOptionPane.showOptionDialog(this, "Choose Game State", "Game State",
                     JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE,
-                    null, options, options[0]);
-        } while (result == JOptionPane.CLOSED_OPTION);
-        int numPlayers = wp.getPlayerCount();
-
-        //PlayerName panel of risk game
-        Map<String, Boolean> playerNames = new HashMap<>();
-        boolean validInput = true;
-        for (int i = 0; i < numPlayers; validInput = true) {
-            PlayerNamePanel pnp = new PlayerNamePanel(i);
-            do {
-                result = JOptionPane.showOptionDialog(
-                        this, pnp, "Player Names",
-                        JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE,
-                        null, options, options[0]);
-
-                //checks if name is already used
-                for (String nameCheck : playerNames.keySet()) {
-                    if (nameCheck.equalsIgnoreCase(pnp.getPlayerName())) {
-                        validInput = false;
-                        JOptionPane.showMessageDialog(pnp,"Name is already used");
-                        break;
-                    }
+                    null, gameOptions, gameOptions[0]);
+            if (result == JOptionPane.YES_OPTION){
+                welcomePlayers(game);
+                break;
+            }else if (result == JOptionPane.NO_OPTION){
+                if (!game.loadGame()){
+                    JOptionPane.showMessageDialog(this, "There is no saved game");
+                }else{
+                    break;
                 }
-
-                //checks if name is too long if name was not already used
-                if (validInput && pnp.getPlayerName().length() > 15) {
-                    validInput = false;
-                    JOptionPane.showMessageDialog(pnp,"Name is too long (15 characters max)");
+            }else if (result == JOptionPane.CANCEL_OPTION){
+                if (!game.loadCustomMap()) {
+                    JOptionPane.showMessageDialog(this, "Custom map is invalid");
+                }else{
+                    welcomePlayers(game);
+                    break;
                 }
-            } while (result == JOptionPane.CLOSED_OPTION || pnp.getPlayerName().isBlank() || pnp.getPlayerName().equals("Name here"));
-
-            if (validInput) {
-                i++;
-                playerNames.put(pnp.getPlayerName(), pnp.isAI());
             }
         }
 
-        Game game  = new Game();
-        game.addGameView(this);
-
-        //Initializer to get number of players, player's name, distribution of territory and armies
-        game.initialize(playerNames);
-
-        mapList = new DefaultMutableTreeNode();
         Map<String, Continent> continents = game.getContinents();
         List<Player> activePlayers = game.getActivePlayers();
         Player currentPlayer = game.getCurrentPlayer();
         GameController gc = new GameController(game,this);
+
+        JMenuBar menuBar = new JMenuBar();
+        JMenu menu = new JMenu("File");
+        JMenuItem load = new JMenuItem("Load Game");
+        JMenuItem save = new JMenuItem("Save Game");
+        load.addActionListener(gc);
+        load.setActionCommand(load.getText());
+        save.addActionListener(gc);
+        save.setActionCommand(save.getText());
+
+        menu.add(load);
+        menu.add(save);
+        menuBar.add(menu);
+
+        //JTree for map
+        mapList = new DefaultMutableTreeNode();
         for (String id : continents.keySet()) {
             DefaultMutableTreeNode contList = new DefaultMutableTreeNode(continents.get(id).getName());
             for (Territory territory : continents.get(id).getTerritoryList()) {
@@ -116,9 +109,13 @@ public class GameFrame extends JFrame implements GameView{
         done = new JButton("Done");
         place = new JButton("Place");
         attack.addActionListener(gc);
+        attack.setActionCommand(attack.getText());
         move.addActionListener(gc);
+        move.setActionCommand(move.getText());
         done.addActionListener(gc);
+        done.setActionCommand(done.getText());
         place.addActionListener(gc);
+        place.setActionCommand(place.getText());
 
         //TextArea to show the log
         actionLog = new JTextArea();
@@ -159,6 +156,7 @@ public class GameFrame extends JFrame implements GameView{
         bottomPanel.add(done);
         bottomPanel.add(place);
         add(bottomPanel, BorderLayout.SOUTH);
+        this.setJMenuBar(menuBar);
         this.setSize(1200, 600);
         this.setVisible(true);
         this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -267,6 +265,60 @@ public class GameFrame extends JFrame implements GameView{
                     null, options, options[0]);
             disableButtons();
         }
+    }
+
+    /**
+     * Opens panels that ask player count and their names
+     *
+     * @param game gamemodel which initializes the game here
+     *
+     * @author Robell Gabriel
+     */
+    private void welcomePlayers(Game game){
+        Map<String, Boolean> playerNames = new HashMap<>();
+        int result;
+        //welcome panel of risk game
+        WelcomePanel wp = new WelcomePanel();
+        do {
+            result = JOptionPane.showOptionDialog(this, wp, "Welcome",
+                    JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE,
+                    null, options, options[0]);
+        } while (result == JOptionPane.CLOSED_OPTION);
+        int numPlayers = wp.getPlayerCount();
+
+        //PlayerName panel of risk game
+        boolean validInput = true;
+        for (int i = 0; i < numPlayers; validInput = true) {
+            PlayerNamePanel pnp = new PlayerNamePanel(i);
+            do {
+                result = JOptionPane.showOptionDialog(
+                        this, pnp, "Player Names",
+                        JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE,
+                        null, options, options[0]);
+
+                //checks if name is already used
+                for (String nameCheck : playerNames.keySet()) {
+                    if (nameCheck.equalsIgnoreCase(pnp.getPlayerName())) {
+                        validInput = false;
+                        JOptionPane.showMessageDialog(pnp,"Name is already used");
+                        break;
+                    }
+                }
+
+                //checks if name is too long if name was not already used
+                if (validInput && pnp.getPlayerName().length() > 15) {
+                    validInput = false;
+                    JOptionPane.showMessageDialog(pnp,"Name is too long (15 characters max)");
+                }
+            } while (result == JOptionPane.CLOSED_OPTION || pnp.getPlayerName().isBlank() || pnp.getPlayerName().equals("Name here"));
+
+            if (validInput) {
+                i++;
+                playerNames.put(pnp.getPlayerName(), pnp.isAI());
+            }
+        }
+        //Initializer to get number of players, player's name, distribution of territory and armies
+        game.initialize(playerNames);
     }
 
     /**
