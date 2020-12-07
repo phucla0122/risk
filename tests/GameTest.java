@@ -174,12 +174,6 @@ public class GameTest {
     @Test
 
     public void testAttackWon() {
-        game = new Game();
-        Map<String, Boolean> names = new HashMap<>();
-        names.put("Patrick",false);
-        names.put("Spongebob",false);
-        game.initialize(names);
-
         Player player1 = game.getActivePlayers().get(0);
         Player player2 = game.getActivePlayers().get(1);
 
