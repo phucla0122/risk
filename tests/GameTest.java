@@ -172,6 +172,7 @@ public class GameTest {
     }
 
     @Test
+
     public void testAttackWon() {
         game = new Game();
         Map<String, Boolean> names = new HashMap<>();
