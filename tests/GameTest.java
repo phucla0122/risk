@@ -9,7 +9,7 @@ public class GameTest {
     HashMap<String, Boolean> playerNames;
 
     @Before
-    public void setUp() {
+    public void SetUp() {
         game = new Game();
         playerNames = new HashMap<>();
         playerNames.put("a",false);
@@ -18,7 +18,7 @@ public class GameTest {
     }
 
     @After
-    public void tearDown(){
+    public void TearDown(){
         game = null;
         playerNames = null;
     }

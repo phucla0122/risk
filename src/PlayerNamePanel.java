@@ -46,7 +46,9 @@ public class PlayerNamePanel extends JPanel {
         setLayout(new GridLayout(2,2));
         add(askName);
         add(name);
-        add(AIPlayer);
+        if (i > 0) {
+            add(AIPlayer);
+        }
     }
 
     /**

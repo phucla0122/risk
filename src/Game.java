@@ -435,14 +435,16 @@ public class Game {
         placePhase(toAdd);
 
         //runs out all commands in a loop at random
-        int rng = rnd.nextInt(AI_MAX);
-        while (rng != AI_THRESHOLD && !currentPlayer.allLandOwnedHas1Army()) {
-            if (rng > AI_THRESHOLD && currentPlayer.allLandOwnedAdjacentIsFriendly(this)) {
+        int rng = AI_THRESHOLD - 1;
+
+        while (!currentPlayer.allLandOwnedHas1Army()) {
+            if (rng >= AI_THRESHOLD && currentPlayer.allLandOwnedAdjacentIsFriendly(this)) {
                 // Move phase
                 List<Territory> playerTerrs = currentPlayer.getLandWithAdjacentAlly(this)
                         .stream()
                         .filter(territory -> territory.getNumArmies() > 1)
                         .collect(Collectors.toList());
+
 
                 rng = rnd.nextInt(playerTerrs.size());
                 Territory moveFrom;

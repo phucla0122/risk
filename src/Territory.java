@@ -135,6 +135,15 @@ public class Territory {
         return output;
     }
 
+    public boolean hasAdjacentEnemy(Game gameState) {
+        Optional<Territory> temp;
+        for (String toCheck : listOfAdjacents){
+            temp = gameState.findTerritory(toCheck);
+            if (temp.isPresent() && temp.get().getOwner() != owner) return true;
+        }
+        return false;
+    }
+
     @Override
     public String toString() {
         return name + " [" + id + "] | Owner: " + owner.getName() + " | Armies: " + numArmies + " | Adjacent Territories: " +listOfAdjacents;
