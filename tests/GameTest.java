@@ -6,14 +6,25 @@ import static org.junit.Assert.*;
 
 public class GameTest {
     Game game;
+    HashMap<String, Boolean> playerNames;
+
+    @Before
+    public void setUp() {
+        game = new Game();
+        playerNames = new HashMap<>();
+        playerNames.put("a",false);
+        playerNames.put("b",false);
+        game.initialize(playerNames);
+    }
+
+    @After
+    public void tearDown(){
+        game = null;
+        playerNames = null;
+    }
 
     @Test
     public void testMovePhase() {
-        game = new Game();
-        Map<String, Boolean> names = new HashMap<>();
-        names.put("Subject1", false);
-        names.put("Patrick", false);
-        game.initialize(names);
 
         Player p  = game.getCurrentPlayer();
         Territory t1 = p.getAllLandOwned().get(0);
@@ -45,12 +56,6 @@ public class GameTest {
      */
     @Test
     public void testPlacePhaseSingleTer() {
-        game = new Game();
-        //Testing place phase for 1 specific territory
-        HashMap<String, Boolean> players = new HashMap<>();
-        players.put("Tester", false);
-        players.put("Other", false);
-        game.initialize(players);
 
         Player p = game.getCurrentPlayer();
         Territory placing = p.getAllLandOwned().get(0);
@@ -68,14 +73,9 @@ public class GameTest {
      */
     @Test
     public void testInitialize() {
-        game = new Game();
-        Map<String, Boolean> playerNames = new HashMap<>();
-        playerNames.put("a",false);
-        playerNames.put("b",false);
 
         int totalTerr = 0;
 
-        game.initialize(playerNames);
         for (Player player : game.getActivePlayers()) {
             totalTerr += player.getAllLandOwnedSize();
             int totalArm = 0;
@@ -142,17 +142,12 @@ public class GameTest {
         }
         assertEquals(42, totalTerr);
     }
-  
+
     /**
      * This method test place phase when player distribute multiple armies to multiple territories
      */
     @Test
     public void testPlacePhaseMultipleTer() {
-        game = new Game();
-        HashMap<String, Boolean> players = new HashMap<>();
-        players.put("Tester", false);
-        players.put("Other", false);
-        game.initialize(players);
         //Testing place phase for multiple territories involved
         Territory testTer1, testTer2, testTer3;
         int ter1Armies, ter2Armies, ter3Armies;
