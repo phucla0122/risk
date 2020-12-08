@@ -188,7 +188,6 @@ public class Game implements Serializable {
      */
     public void done() {
         status = Status.DONE;
-        isFirstTurn = false;
         printLine(currentPlayer.getName() + " has ended their turn\n");
         currentPlayer = activePlayers.get((activePlayers.indexOf(currentPlayer) + 1) % activePlayers.size());
         updateView();
