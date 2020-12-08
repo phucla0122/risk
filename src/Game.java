@@ -1,3 +1,6 @@
+import org.xml.sax.SAXException;
+
+import javax.xml.parsers.ParserConfigurationException;
 import java.io.*;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -13,7 +16,6 @@ public class Game implements Serializable {
     private Map<String, Continent> continents;
     private Player currentPlayer;
     private final ArrayList<GameView> gameViews;
-    private boolean isFirstTurn;
 
     public enum Status {ATTACK, PLACE, DISABLE, DONE, PASS}
     private Status status = Status.PLACE;
@@ -41,7 +43,6 @@ public class Game implements Serializable {
         activePlayers = new LinkedList<>();
         continents = new HashMap<>();
         gameViews = new ArrayList<>();
-        isFirstTurn = true;
     }
 
     /**
@@ -83,7 +84,7 @@ public class Game implements Serializable {
         } else {
             printLine("some how u messed up tough luck");
         }
-        if (isFirstTurn && currentPlayer.isAI()) {
+        if (currentPlayer.isAI()) {
             done();
         } else {
             passTurn();
@@ -187,7 +188,6 @@ public class Game implements Serializable {
      */
     public void done() {
 
-        isFirstTurn = false;
         passTurn();
         while (currentPlayer.isAI() && activePlayers.size() > 1) {
             AITurn();
@@ -484,15 +484,13 @@ public class Game implements Serializable {
             }
             rng = rnd.nextInt(AI_MAX);
         }
-        if (isFirstTurn) {
-            done();
-        } else {
-            passTurn();
-        }
+        done();
     }
 
     /**
      * Saves current game state into a file
+     *
+     * @throws IOException if file cannot save
      */
     public void saveGame() throws IOException {
         FileOutputStream gameSaveFile = new FileOutputStream("RISK.sav");
@@ -505,26 +503,20 @@ public class Game implements Serializable {
     /**
      * Loads a saved game state from a file into current game/new game
      *
-     * @return true if file exists, false otherwise
+     * @throws IOException if file cannot load
+     * @throws ClassNotFoundException if file's object cannot be added
      */
-    public boolean loadGame() {
-        try {
-            FileInputStream gameFile = new FileInputStream("RISK.sav");
-            ObjectInputStream gameObjin = new ObjectInputStream(gameFile);
-            Game risk = (Game) gameObjin.readObject();
-            currentPlayer = risk.getCurrentPlayer();
-            activePlayers = risk.getActivePlayers();
-            continents = risk.getContinents();
-            isFirstTurn = risk.getIsFirstTurn();
-            return true;
-        } catch (ClassNotFoundException | IOException e) {
-            e.printStackTrace();
-        }
-        return false;
+    public void loadGame() throws IOException, ClassNotFoundException {
+        FileInputStream gameFile = new FileInputStream("RISK.sav");
+        ObjectInputStream gameObjin = new ObjectInputStream(gameFile);
+        Game risk = (Game) gameObjin.readObject();
+        currentPlayer = risk.getCurrentPlayer();
+        activePlayers = risk.getActivePlayers();
+        continents = risk.getContinents();
     }
 
-    public boolean loadCustomMap() {
-        return false;
+    public void importCustomMap(String filename) throws ParserConfigurationException, SAXException, IOException{
+        System.out.println(filename);
     }
 
     /**
@@ -595,13 +587,5 @@ public class Game implements Serializable {
      */
     public void addGameView(GameView view){
         gameViews.add(view);
-    }
-
-    /**
-     * Get the status of the game if it is the first turn.
-     * @return true if it is first turn and false other wise
-     */
-    public boolean getIsFirstTurn(){
-        return isFirstTurn;
     }
 }

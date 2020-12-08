@@ -1,5 +1,8 @@
+import org.xml.sax.SAXException;
+
 import javax.swing.*;
 import javax.swing.tree.DefaultMutableTreeNode;
+import javax.xml.parsers.ParserConfigurationException;
 import java.awt.*;
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -51,22 +54,24 @@ public class GameFrame extends JFrame implements GameView{
                 welcomePlayers(game);
                 break;
             }else if (result == JOptionPane.NO_OPTION){
-                if (!game.loadGame()){
-                    JOptionPane.showMessageDialog(this, "There is no saved game");
-                }else{
-                    try {
-                        loadActionLog();
-                    } catch (FileNotFoundException fileNotFoundException) {
-                        fileNotFoundException.printStackTrace();
-                    }
+                try {
+                    game.loadGame();
+                    loadActionLog();
                     break;
+                } catch (ClassNotFoundException | IOException e) {
+                    JOptionPane.showMessageDialog(this, "There is no saved game");
+                    e.printStackTrace();
                 }
             }else if (result == JOptionPane.CANCEL_OPTION){
-                if (!game.loadCustomMap()) {
-                    JOptionPane.showMessageDialog(this, "Custom map is invalid");
-                }else{
+                try{
+                    JFileChooser file = new JFileChooser();
+                    file.showSaveDialog(null);
+                    game.importCustomMap(file.getSelectedFile().getParent());
                     welcomePlayers(game);
                     break;
+                }catch (ParserConfigurationException | SAXException | IOException e){
+                    JOptionPane.showMessageDialog(this, "Custom map is invalid");
+                    e.printStackTrace();
                 }
             }
         }
@@ -371,5 +376,9 @@ public class GameFrame extends JFrame implements GameView{
             printLine(act);
         }
         actionLog.append("\n");
+    }
+
+    public JTextArea getActionLog() {
+        return actionLog;
     }
 }

@@ -219,4 +219,39 @@ public class GameTest {
         assertEquals(defending2.getOwner(), player1);
         assertTrue(player1.getAllLandOwned().contains(defending2));
     }
+
+
+    /**
+     * Test save and load features for GameModel and ActionLog
+     *
+     * @throws IOException if the GameModelfile is invalid
+     * @throws ClassNotFoundException if adding objects from GameModelfile is invalid
+     * @throws FileNotFoundException if actionlog file doesnt exist
+     *
+     * @author Robell Gabriel
+     */
+    @Test
+    public void saveEqualsLoadGame() throws IOException, ClassNotFoundException, FileNotFoundException {
+        Game gSave = new Game();
+        Game gLoad = new Game();
+
+        Map<String, Boolean> playerNames = new HashMap<>();
+        playerNames.put("a",false);
+        playerNames.put("b",false);
+        gSave.initialize(playerNames);
+
+        gSave.saveGame();
+        gLoad.loadGame();
+
+        assertEquals(gSave.toString(), gLoad.toString());
+
+        GameFrame gFSave = new GameFrame();
+        GameFrame gFLoad = new GameFrame();
+
+        gFSave.printLine("Testing");
+        gFSave.saveActionLog();
+        gFLoad.loadActionLog();
+
+        assertEquals(gSave.getActionLog.getText(), gLoad.getActionLog.getText());
+    }
 }

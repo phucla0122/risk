@@ -1,6 +1,5 @@
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.Random;
 import javax.swing.*;
@@ -38,14 +37,13 @@ public class GameController implements ActionListener {
         //if place button is pressed pull up a PlacePanel to get input from user and update model accordingly
         switch (e.getActionCommand()) {
             case "Load Game":{
-                if (!game.loadGame()){
-                    JOptionPane.showMessageDialog(gameView, "There is no saved game");
-                }
-                gameView.updateView(game);
                 try {
+                    game.loadGame();
+                    gameView.updateView(game);
                     gameView.loadActionLog();
-                } catch (FileNotFoundException fileNotFoundException) {
-                    fileNotFoundException.printStackTrace();
+                } catch (IOException | ClassNotFoundException exception) {
+                    JOptionPane.showMessageDialog(gameView, "There is no saved game");
+                    exception.printStackTrace();
                 }
                 break;
             }
