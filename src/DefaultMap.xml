@@ -1,0 +1,212 @@
+<CustomMap>
+    <Continent>
+        <ID>NA</ID>
+        <Name>North America</Name>
+        <BonusArmies>5</BonusArmies>
+        <Territories>
+            <Territory>
+                <Name>Alaska</Name>
+                <Adjacents>NA2,NA6,AS6</Adjacents>
+            </Territory>
+            <Territory>
+                <Name>Alberta (Western Canada)</Name>
+                <Adjacents>NA1,NA6,NA7,NA9</Adjacents>
+            </Territory>
+            <Territory>
+                <Name>Central America</Name>
+                <Adjacents>NA4,NA9,SA4</Adjacents>
+            </Territory>
+            <Territory>
+                <Name>Eastern United States</Name>
+                <Adjacents>NA3,NA7,NA8,NA9</Adjacents>
+            </Territory>
+            <Territory>
+                <Name>Greenland</Name>
+                <Adjacents>NA6,NA7,NA8,EU2</Adjacents>
+            </Territory>
+            <Territory>
+                <Name>Northwest Territory</Name>
+                <Adjacents>NA1,NA2,NA5,NA7</Adjacents>
+            </Territory>
+            <Territory>
+                <Name>Ontario (Central Canada)</Name>
+                <Adjacents>NA2,NA4,NA5,NA6,NA8,NA9</Adjacents>
+            </Territory>
+            <Territory>
+                <Name>Quebec (Eastern Canada)</Name>
+                <Adjacents>NA4,NA5,NA7</Adjacents>
+            </Territory>
+            <Territory>
+                <Name>Western United States</Name>
+                <Adjacents>NA2,NA3,NA4,NA7</Adjacents>
+            </Territory>
+        </Territories>
+    </Continent>
+    <Continent>
+        <ID>EU</ID>
+        <Name>Europe</Name>
+        <BonusArmies>5</BonusArmies>
+        <Territories>
+            <Territory>
+                <Name>Great Britain (Great Britain and Ireland)</Name>
+                <Adjacents>EU2,EU3,EU4,EU7</Adjacents>
+            </Territory>
+            <Territory>
+                <Name>Iceland</Name>
+                <Adjacents>EU1,EU4,NA5</Adjacents>
+            </Territory>
+            <Territory>
+                <Name>Northern Europe</Name>
+                <Adjacents>EU1,EU4,EU5,EU6,EU7</Adjacents>
+            </Territory>
+            <Territory>
+                <Name>Scandinavia</Name>
+                <Adjacents>EU1,EU2,EU3,EU6</Adjacents>
+            </Territory>
+            <Territory>
+                <Name>Southern Europe</Name>
+                <Adjacents>EU3,EU6,EU7,AF3,AF5,AS7</Adjacents>
+            </Territory>
+            <Territory>
+                <Name>Ukraine (Eastern Europe, Russia)</Name>
+                <Adjacents>EU3,EU4,EU5,AS1,AS7,AS11</Adjacents>
+            </Territory>
+            <Territory>
+                <Name>Western Europe</Name>
+                <Adjacents>EU1,EU3,EU5,AF5</Adjacents>
+            </Territory>
+        </Territories>
+    </Continent>
+    <Continent>
+        <ID>AS</ID>
+        <Name>Asia</Name>
+        <BonusArmies>7</BonusArmies>
+        <Territories>
+            <Territory>
+                <Name>Afghanistan</Name>
+                <Adjacents>AS2,AS3,AS7,AS11,EU6</Adjacents>
+            </Territory>
+            <Territory>
+                <Name>China</Name>
+                <Adjacents>AS1,AS3,AS8,AS9,AS10,AS11</Adjacents>
+            </Territory>
+            <Territory>
+                <Name>India (Hindustan)</Name>
+                <Adjacents>AS1,AS2,AS7,AS9</Adjacents>
+            </Territory>
+            <Territory>
+                <Name>Irkutsk</Name>
+                <Adjacents>AS6,AS8,AS10,AS12</Adjacents>
+            </Territory>
+            <Territory>
+                <Name>Japan</Name>
+                <Adjacents>AS6,AS8</Adjacents>
+            </Territory>
+            <Territory>
+                <Name>Kamchatka</Name>
+                <Adjacents>AS4,AS5,AS8,AS12,NA1</Adjacents>
+            </Territory>
+            <Territory>
+                <Name>Middle East</Name>
+                <Adjacents>AS1,AS3,EU5,EU6,AF2,AF3</Adjacents>
+            </Territory>
+            <Territory>
+                <Name>Mongolia</Name>
+                <Adjacents>AS2,AS4,AS5,AS6,AS10</Adjacents>
+            </Territory>
+            <Territory>
+                <Name>Siam (Southeast Asia)</Name>
+                <Adjacents>AS2,AS3,AU2</Adjacents>
+            </Territory>
+            <Territory>
+                <Name>Siberia</Name>
+                <Adjacents>AS2,AS4,AS8,AS11,AS12</Adjacents>
+            </Territory>
+            <Territory>
+                <Name>Ural</Name>
+                <Adjacents>AS1,AS2,AS10,EU6</Adjacents>
+            </Territory>
+            <Territory>
+                <Name>Yakutsk</Name>
+                <Adjacents>AS4,AS6,AS10</Adjacents>
+            </Territory>
+        </Territories>
+    </Continent>
+    <Continent>
+        <ID>SA</ID>
+        <Name>South America</Name>
+        <BonusArmies>2</BonusArmies>
+        <Territories>
+            <Territory>
+                <Name>Argentina</Name>
+                <Adjacents>SA2,SA3</Adjacents>
+            </Territory>
+            <Territory>
+                <Name>Brazil</Name>
+                <Adjacents>SA1,SA3,SA4,AF5</Adjacents>
+            </Territory>
+            <Territory>
+                <Name>Peru</Name>
+                <Adjacents>SA1,SA2,SA4</Adjacents>
+            </Territory>
+            <Territory>
+                <Name>Venezuela</Name>
+                <Adjacents>SA2,SA3,NA3</Adjacents>
+            </Territory>
+        </Territories>
+    </Continent>
+    <Continent>
+        <ID>AF</ID>
+        <Name>Africa</Name>
+        <BonusArmies>3</BonusArmies>
+        <Territories>
+            <Territory>
+                <Name>Congo (Central Africa)</Name>
+                <Adjacents>AF2,AF5,AF6</Adjacents>
+            </Territory>
+            <Territory>
+                <Name>East Africa</Name>
+                <Adjacents>AF1,AF3,AF4,AF5,AF6,AS7</Adjacents>
+            </Territory>
+            <Territory>
+                <Name>Egypt</Name>
+                <Adjacents>AF2,AF5,EU5,AS7</Adjacents>
+            </Territory>
+            <Territory>
+                <Name>Madagascar</Name>
+                <Adjacents>AF2,AF6</Adjacents>
+            </Territory>
+            <Territory>
+                <Name>North Africa</Name>
+                <Adjacents>AF1,AF2,AF3,EU5,EU7,SA2</Adjacents>
+            </Territory>
+            <Territory>
+                <Name>South Africa</Name>
+                <Adjacents>AF1,AF2,AF4</Adjacents>
+            </Territory>
+        </Territories>
+    </Continent>
+    <Continent>
+        <ID>AU</ID>
+        <Name>Australia</Name>
+        <BonusArmies>2</BonusArmies>
+        <Territories>
+            <Territory>
+                <Name>Eastern Australia</Name>
+                <Adjacents>AU3,AU4</Adjacents>
+            </Territory>
+            <Territory>
+                <Name>Indonesia</Name>
+                <Adjacents>AU3,AU4,AS9</Adjacents>
+            </Territory>
+            <Territory>
+                <Name>New Guinea</Name>
+                <Adjacents>AU1,AU2,AU4</Adjacents>
+            </Territory>
+            <Territory>
+                <Name>Western Australia</Name>
+                <Adjacents>AU1,AU2,AU3</Adjacents>
+            </Territory>
+        </Territories>
+    </Continent>
+</CustomMap>

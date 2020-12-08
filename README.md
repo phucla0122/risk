@@ -7,12 +7,12 @@
 - Robell Gabriel
 - Jacob Schmidt
 
-## Milestone 3
+## Milestone 4
 
 ### Deliverables
 
-##### riskGroup11-iter3.zip containing:
-- risk.jar - executable
+##### riskGroup11-iter4.zip containing:
+- risk.jar - executable with source code
 - UML folder - All class diagrams and sequence diagrams
 - source code folder - Complete source code with unit tests
 - documentation folder - Complete documentation including Javadoc and user manuals
@@ -20,23 +20,20 @@
 ### Changes
 
 #### Nicolas:
-- Refactored View classes
+- Implemented custom map imports
  
-### Phuc:
-- Began working on Game state and map serialization (see issue #27 on Github)
-
-#### Robell:
-- Implemented AI Player logic
+### Phuc and Robell:
+- Implemented Game state and action log serialization
 
 #### Jacob:
-- Refactored Model classes
+- Refactored test cases to use setUp/tearDown
+- Fixed AI issues
 
 ### Known Issues
 
-- None so far!
+- None! :)
 
 ### Roadmap
 
-- Implement custom game maps
-- Save game state to file
-- Load saved game state from file
+- Study for finals
+- Take a well-deserved break

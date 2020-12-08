@@ -90,4 +90,13 @@ public class Continent implements Serializable {
         }
         return String.join("\n", output);
     }
+
+    @Override
+    public boolean equals(Object o) {
+        if (!(o instanceof Continent)) {
+            return false;
+        }
+        Continent c = (Continent)o;
+        return c.BONUS_ARMIES == this.BONUS_ARMIES && c.name.equals(this.name) && c.territories.containsAll(this.territories);
+    }
 }

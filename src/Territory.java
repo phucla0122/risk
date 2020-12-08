@@ -136,8 +136,22 @@ public class Territory implements Serializable {
         return output;
     }
 
+
     @Override
     public String toString() {
         return name + " [" + id + "] | Owner: " + owner.getName() + " | Armies: " + numArmies + " | Adjacent Territories: " +listOfAdjacents;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (!(o instanceof Territory)) {
+            return false;
+        }
+        Territory t = (Territory)o;
+        return t.id.equals(this.id)
+                && t.name.equals(this.name)
+                && t.numArmies == this.numArmies
+                && t.owner == this.owner
+                && t.listOfAdjacents.containsAll(this.listOfAdjacents);
     }
 }

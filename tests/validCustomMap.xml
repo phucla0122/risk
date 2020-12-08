@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<CustomMap>
+    <!-- May include multiple continents -->
+    <Continent>
+        <ID>NA</ID>
+        <Name>North America</Name>
+        <BonusArmies>4</BonusArmies>
+        <Territories>
+            <!-- May include multiple territories -->
+            <Territory>
+                <Name>Eastern United States</Name>
+                <Adjacents>NA2,NA3,NA4</Adjacents>
+            </Territory>
+            <Territory>
+                <Name>Western United States</Name>
+                <Adjacents>NA1,NA3,NA4</Adjacents>
+            </Territory>
+            <Territory>
+                <Name>Northern United States</Name>
+                <Adjacents>NA1,NA2</Adjacents>
+            </Territory>
+            <Territory>
+                <Name>Southern United States</Name>
+                <Adjacents>NA1,NA2</Adjacents>
+            </Territory>
+        </Territories>
+    </Continent>
+</CustomMap>

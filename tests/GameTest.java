@@ -1,19 +1,33 @@
 import org.junit.*;
+import org.xml.sax.SAXException;
 
+import javax.xml.parsers.ParserConfigurationException;
+import java.io.IOException;
 import java.util.*;
 
 import static org.junit.Assert.*;
 
 public class GameTest {
     Game game;
+    HashMap<String, Boolean> playerNames;
+
+    @Before
+    public void SetUp() {
+        game = new Game();
+        playerNames = new HashMap<>();
+        playerNames.put("a",false);
+        playerNames.put("b",false);
+        game.initialize(playerNames);
+    }
+
+    @After
+    public void TearDown(){
+        game = null;
+        playerNames = null;
+    }
 
     @Test
     public void testMovePhase() {
-        game = new Game();
-        Map<String, Boolean> names = new HashMap<>();
-        names.put("Subject1", false);
-        names.put("Patrick", false);
-        game.initialize(names);
 
         Player p  = game.getCurrentPlayer();
         Territory t1 = p.getAllLandOwned().get(0);
@@ -45,12 +59,6 @@ public class GameTest {
      */
     @Test
     public void testPlacePhaseSingleTer() {
-        game = new Game();
-        //Testing place phase for 1 specific territory
-        HashMap<String, Boolean> players = new HashMap<>();
-        players.put("Tester", false);
-        players.put("Other", false);
-        game.initialize(players);
 
         Player p = game.getCurrentPlayer();
         Territory placing = p.getAllLandOwned().get(0);
@@ -68,14 +76,9 @@ public class GameTest {
      */
     @Test
     public void testInitialize() {
-        game = new Game();
-        Map<String, Boolean> playerNames = new HashMap<>();
-        playerNames.put("a",false);
-        playerNames.put("b",false);
 
         int totalTerr = 0;
 
-        game.initialize(playerNames);
         for (Player player : game.getActivePlayers()) {
             totalTerr += player.getAllLandOwnedSize();
             int totalArm = 0;
@@ -142,17 +145,12 @@ public class GameTest {
         }
         assertEquals(42, totalTerr);
     }
-  
+
     /**
      * This method test place phase when player distribute multiple armies to multiple territories
      */
     @Test
     public void testPlacePhaseMultipleTer() {
-        game = new Game();
-        HashMap<String, Boolean> players = new HashMap<>();
-        players.put("Tester", false);
-        players.put("Other", false);
-        game.initialize(players);
         //Testing place phase for multiple territories involved
         Territory testTer1, testTer2, testTer3;
         int ter1Armies, ter2Armies, ter3Armies;
@@ -177,13 +175,8 @@ public class GameTest {
     }
 
     @Test
-    public void testAttackWon() {
-        game = new Game();
-        Map<String, Boolean> names = new HashMap<>();
-        names.put("Patrick",false);
-        names.put("Spongebob",false);
-        game.initialize(names);
 
+    public void testAttackWon() {
         Player player1 = game.getActivePlayers().get(0);
         Player player2 = game.getActivePlayers().get(1);
 
@@ -220,7 +213,6 @@ public class GameTest {
         assertTrue(player1.getAllLandOwned().contains(defending2));
     }
 
-
     /**
      * Test save and load features for GameModel and ActionLog
      *
@@ -253,5 +245,42 @@ public class GameTest {
         gFLoad.loadActionLog();
 
         assertEquals(gSave.getActionLog.getText(), gLoad.getActionLog.getText());
+    }
+    /**
+     * Test importing a custom map.
+     * @throws IOException If the file cannot be read
+     * @throws SAXException If the file is improperly formatted
+     * @throws ParserConfigurationException If the parser is incorrectly configured
+     * @author Nicolas Tuttle
+     */
+    @Test
+    public void testImportValidMap() throws IOException, SAXException, ParserConfigurationException {
+        HashMap<String, Continent> expectedContinents = new HashMap<>();
+        expectedContinents.put("NA", new Continent(
+                "North America",
+                List.of(
+                        new Territory("Eastern United States", "NA1", List.of("NA2", "NA3", "NA4")),
+                        new Territory("Western United States", "NA2", List.of("NA1", "NA3", "NA4")),
+                        new Territory("Northern United States", "NA3", List.of("NA2")),
+                        new Territory("Southern United States", "NA4", List.of("NA2"))
+                ),
+                4
+        ));
+        Game game = new Game();
+        game.importCustomMap("tests/validCustomMap.xml");
+        assertEquals(expectedContinents, game.getContinents());
+    }
+
+    /**
+     * Test importing an invalid custom map.
+     * @throws IOException If the file cannot be read
+     * @throws SAXException Should throw this as the file is invalid
+     * @throws ParserConfigurationException If the parser is incorrectly configured
+     * @author Nicolas Tuttle
+     */
+    @Test(expected = SAXException.class)
+    public void testImportInvalidMap() throws IOException, SAXException, ParserConfigurationException {
+        Game game = new Game();
+        game.importCustomMap("tests/invalidCustomMap.xml");
     }
 }

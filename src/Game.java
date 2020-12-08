@@ -1,7 +1,9 @@
 import org.xml.sax.SAXException;
-
 import javax.xml.parsers.ParserConfigurationException;
 import java.io.*;
+import javax.swing.*;
+import javax.xml.parsers.SAXParser;
+import javax.xml.parsers.SAXParserFactory;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -11,6 +13,7 @@ import java.util.stream.Collectors;
  *
  * @author Nicolas Tuttle, Phuc La, Robell Gabriel, Jacob Schmidt
  */
+
 public class Game implements Serializable {
     private List<Player> activePlayers;
     private Map<String, Continent> continents;
@@ -84,11 +87,8 @@ public class Game implements Serializable {
         } else {
             printLine("some how u messed up tough luck");
         }
-        if (currentPlayer.isAI()) {
             done();
-        } else {
-            passTurn();
-        }
+
     }
 
     /**
@@ -187,22 +187,16 @@ public class Game implements Serializable {
      * Initiates AI turn if necessary
      */
     public void done() {
-
-        passTurn();
+        status = Status.DONE;
+        isFirstTurn = false;
+        printLine(currentPlayer.getName() + " has ended their turn\n");
+        currentPlayer = activePlayers.get((activePlayers.indexOf(currentPlayer) + 1) % activePlayers.size());
+        updateView();
         while (currentPlayer.isAI() && activePlayers.size() > 1) {
             AITurn();
         }
     }
 
-    /**
-     * moves the turn over to the next player
-     */
-    private void passTurn() {
-        status = Status.DONE;
-        printLine(currentPlayer.getName() + " has ended their turn\n");
-        currentPlayer = activePlayers.get((activePlayers.indexOf(currentPlayer) + 1) % activePlayers.size());
-        updateView();
-    }
 
     /**
      * Roll dice the specified number of times and return the list of results
@@ -248,75 +242,16 @@ public class Game implements Serializable {
      * @author Robell Gabriel
      */
     public void initialize(Map<String, Boolean> playerName) {
-        ArrayList<Integer> handleUnevenTerr4; //list of Territory total for when numPLayer=4
-        ArrayList<Integer> handleUnevenTerr5; //list of Territory total for when numPLayer=5
         Stack<String> territoryID = new Stack<>(); //stack of temporary territory IDs
         Stack<Integer> armyList2 = new Stack<>(); //stack of temporary armyList
 
-        //Creating all territory lists
-        ArrayList<Territory> NA = new ArrayList<>();
-        ArrayList<Territory> EU = new ArrayList<>();
-        ArrayList<Territory> AS = new ArrayList<>();
-        ArrayList<Territory> SA = new ArrayList<>();
-        ArrayList<Territory> AF = new ArrayList<>();
-        ArrayList<Territory> AU = new ArrayList<>();
-
-        //inputting all territories + adjacent territories into corresponding continent
-        NA.add(new Territory("Alaska", "NA1", Arrays.asList("NA2", "NA6", "AS6")));
-        NA.add(new Territory("Alberta (Western Canada)", "NA2", Arrays.asList("NA1", "NA6", "NA7", "NA9")));
-        NA.add(new Territory("Central America", "NA3", Arrays.asList("NA4", "NA9", "SA4")));
-        NA.add(new Territory("Eastern United States", "NA4", Arrays.asList("NA3", "NA7", "NA8", "NA9")));
-        NA.add(new Territory("Greenland", "NA5", Arrays.asList("NA6", "NA7", "NA8", "EU2")));
-        NA.add(new Territory("Northwest Territory", "NA6", Arrays.asList("NA1", "NA2", "NA5", "NA7")));
-        NA.add(new Territory("Ontario (Central Canada)", "NA7", Arrays.asList("NA2", "NA4", "NA5", "NA6", "NA8", "NA9")));
-        NA.add(new Territory("Quebec (Eastern Canada)", "NA8", Arrays.asList("NA4", "NA5", "NA7")));
-        NA.add(new Territory("Western United States", "NA9", Arrays.asList("NA2", "NA3", "NA4", "NA7")));
-
-        EU.add(new Territory("Great Britain (Great Britain & Ireland)", "EU1", Arrays.asList("EU2", "EU3", "EU4", "EU7")));
-        EU.add(new Territory("Iceland", "EU2", Arrays.asList("EU1", "EU4", "NA5")));
-        EU.add(new Territory("Northern Europe", "EU3", Arrays.asList("EU1", "EU4", "EU5", "EU6", "EU7")));
-        EU.add(new Territory("Scandinavia", "EU4", Arrays.asList("EU1", "EU2", "EU3", "EU6")));
-        EU.add(new Territory("Southern Europe", "EU5", Arrays.asList("EU3", "EU6", "EU7", "AF3", "AF5", "AS7")));
-        EU.add(new Territory("Ukraine (Eastern Europe, Russia)", "EU6", Arrays.asList("EU3", "EU4", "EU5", "AS1", "AS7", "AS11")));
-        EU.add(new Territory("Western Europe", "EU7", Arrays.asList("EU1", "EU3", "EU5", "AF5")));
-
-        AS.add(new Territory("Afghanistan", "AS1", Arrays.asList("AS2", "AS3", "AS7", "AS11", "EU6")));
-        AS.add(new Territory("China", "AS2", Arrays.asList("AS1", "AS3", "AS8", "AS9", "AS10", "AS11")));
-        AS.add(new Territory("India (Hindustan)", "AS3", Arrays.asList("AS1", "AS2", "AS7", "AS9")));
-        AS.add(new Territory("Irkutsk", "AS4", Arrays.asList("AS6", "AS8", "AS10", "AS12")));
-        AS.add(new Territory("Japan", "AS5", Arrays.asList("AS6", "AS8")));
-        AS.add(new Territory("Kamchatka", "AS6", Arrays.asList("AS4", "AS5", "AS8", "AS12", "NA1")));
-        AS.add(new Territory("Middle East", "AS7", Arrays.asList("AS1", "AS3", "EU5", "EU6", "AF2", "AF3")));
-        AS.add(new Territory("Mongolia", "AS8", Arrays.asList("AS2", "AS4", "AS5", "AS6", "AS10")));
-        AS.add(new Territory("Siam (Southeast Asia)", "AS9", Arrays.asList("AS2", "AS3", "AU2")));
-        AS.add(new Territory("Siberia", "AS10", Arrays.asList("AS2", "AS4", "AS8", "AS11", "AS12")));
-        AS.add(new Territory("Ural", "AS11", Arrays.asList("AS1", "AS2", "AS10", "EU6")));
-        AS.add(new Territory("Yakutsk", "AS12", Arrays.asList("AS4", "AS6", "AS10")));
-
-        SA.add(new Territory("Argentina", "SA1", Arrays.asList("SA2", "SA3")));
-        SA.add(new Territory("Brazil", "SA2", Arrays.asList("SA1", "SA3", "SA4", "AF5")));
-        SA.add(new Territory("Peru", "SA3", Arrays.asList("SA1", "SA2", "SA4")));
-        SA.add(new Territory("Venezuela", "SA4", Arrays.asList("SA2", "SA3", "NA3")));
-
-        AF.add(new Territory("Congo (Central Africa)", "AF1", Arrays.asList("AF2", "AF5", "AF6")));
-        AF.add(new Territory("East Africa", "AF2", Arrays.asList("AF1", "AF3", "AF4", "AF5", "AF6", "AS7")));
-        AF.add(new Territory("Egypt", "AF3", Arrays.asList("AF2", "AF5", "EU5", "AS7")));
-        AF.add(new Territory("Madagascar", "AF4", Arrays.asList("AF2", "AF6")));
-        AF.add(new Territory("North Africa", "AF5", Arrays.asList("AF1", "AF2", "AF3", "EU5", "EU7", "SA2")));
-        AF.add(new Territory("South Africa", "AF6", Arrays.asList("AF1", "AF2", "AF4")));
-
-        AU.add(new Territory("Eastern Australia", "AU1", Arrays.asList("AU3", "AU4")));
-        AU.add(new Territory("Indonesia", "AU2", Arrays.asList("AU3", "AU4", "AS9")));
-        AU.add(new Territory("New Guinea", "AU3", Arrays.asList("AU1", "AU2", "AU4")));
-        AU.add(new Territory("Western Australia", "AU4", Arrays.asList("AU1", "AU2", "AU3")));
-
-        //creating continents and adding corresponding territory lists
-        continents.put("NA", new Continent("North America", NA, 5));
-        continents.put("EU", new Continent("Europe", EU, 5));
-        continents.put("AS", new Continent("Asia", AS, 7));
-        continents.put("SA", new Continent("South America", SA, 2));
-        continents.put("AF", new Continent("Africa", AF, 3));
-        continents.put("AU", new Continent("Australia", AU, 2));
+        try {
+            importCustomMap("src/DefaultMap.xml");
+        } catch (Exception e) {
+            // This should never happen if the DefaultMap file is correct!
+            JOptionPane.showMessageDialog(null, "Critical error. Shutting down." + e.getMessage());
+            System.exit(-1);
+        }
 
         //creates list of temporary Ids for each territory which is shuffled to player's get random territory
         for (String id : continents.keySet()) {
@@ -327,34 +262,26 @@ public class Game implements Serializable {
         Collections.shuffle(territoryID);
 
         //insert then shuffle list of Territory total for when there are 4 or 5 players
-        handleUnevenTerr4 = new ArrayList<>(Arrays.asList(10, 10, 11, 11));
-        handleUnevenTerr5 = new ArrayList<>(Arrays.asList(9, 9, 8, 8, 8));
-        Collections.shuffle(handleUnevenTerr4);
-        Collections.shuffle(handleUnevenTerr5);
+        int equalTerrs = territoryID.size() / playerName.size();
+        ArrayList<Integer> terrCount = new ArrayList<>(playerName.size());
+        for (int i = 0; i < playerName.size(); i++) {
+            terrCount.add(equalTerrs);
+        }
+
+        for (int leftover = territoryID.size() - playerName.size() * equalTerrs; leftover > 0; leftover--) {
+            terrCount.set(leftover, terrCount.get(leftover) + 1);
+        }
+        Collections.shuffle(terrCount);
+
+        // Allocate armies per player dependant on number of players
+        List<Integer> allocatedArmies = List.of(50, 35, 30, 25, 20);
 
         //Player name panel asks names then adds player's name and their territories with random amount of armies each
         int i = 0;
         for (String name : playerName.keySet()) {
             activePlayers.add(new Player(name, playerName.get(name)));
-            switch (playerName.size()) {
-                case 2:
-                    initializePlayer(50, 21, i, territoryID, armyList2);
-                    break;
-                case 3:
-                    initializePlayer(35, 14, i, territoryID, armyList2);
-                    break;
-                case 4:
-                    //randomly distribute uneven amount of territories
-                    initializePlayer(30, handleUnevenTerr4.get(i), i, territoryID, armyList2);
-                    break;
-                case 5:
-                    //randomly distribute uneven amount of territories
-                    initializePlayer(25, handleUnevenTerr5.get(i), i, territoryID, armyList2);
-                    break;
-                default:
-                    initializePlayer(20, 7, i, territoryID, armyList2);
-                    break;
-            }
+            initializePlayer(allocatedArmies.get(playerName.size() - 2), terrCount.get(i), i, territoryID, armyList2);
+
             //add random amount of armies to each territory
             for (Territory territory : activePlayers.get(i).getAllLandOwned()) {
                 territory.addArmy(armyList2.pop());
@@ -412,7 +339,6 @@ public class Game implements Serializable {
      */
     public void AITurn() {
         status = Status.DISABLE;
-        updateView();
         Random rnd = new Random();
 
         // Place phase
@@ -436,14 +362,16 @@ public class Game implements Serializable {
         placePhase(toAdd);
 
         //runs out all commands in a loop at random
-        int rng = rnd.nextInt(AI_MAX);
-        while (rng != AI_THRESHOLD && !currentPlayer.allLandOwnedHas1Army()) {
-            if (rng > AI_THRESHOLD && currentPlayer.allLandOwnedAdjacentIsFriendly(this)) {
+        int rng = AI_THRESHOLD - 1;
+
+        while (!currentPlayer.allLandOwnedHas1Army()) {
+            if (rng >= AI_THRESHOLD && currentPlayer.allLandOwnedAdjacentIsFriendly(this)) {
                 // Move phase
                 List<Territory> playerTerrs = currentPlayer.getLandWithAdjacentAlly(this)
                         .stream()
                         .filter(territory -> territory.getNumArmies() > 1)
                         .collect(Collectors.toList());
+
 
                 rng = rnd.nextInt(playerTerrs.size());
                 Territory moveFrom;
@@ -515,10 +443,6 @@ public class Game implements Serializable {
         continents = risk.getContinents();
     }
 
-    public void importCustomMap(String filename) throws ParserConfigurationException, SAXException, IOException{
-        System.out.println(filename);
-    }
-
     /**
      * Update all the views with the given code
      * Also calls AI turn if player is an AI
@@ -527,15 +451,11 @@ public class Game implements Serializable {
     private void updateView(){
         for (GameView gv : gameViews){
             if (currentPlayer.isAI() & status != Status.DONE & status != Status.ATTACK) {
-                if (status == Status.DISABLE){
-                    gv.updateView(this);
-                }
-                else {
+                if (status != Status.DISABLE) {
                     status = Status.PASS;
-                    gv.updateView(this);
                 }
             }
-            else gv.updateView(this);
+            gv.updateView(this);
         }
     }
 
@@ -587,5 +507,21 @@ public class Game implements Serializable {
      */
     public void addGameView(GameView view){
         gameViews.add(view);
+    }
+
+    /**
+     * Import a custom map from an XML file
+     * @param filename The XML file with the custom map
+     * @throws ParserConfigurationException If the parser is incorrectly configured
+     * @throws SAXException If the custom map is invalid
+     * @throws IOException If the file cannot be opened
+     */
+    public void importCustomMap(String filename) throws ParserConfigurationException, SAXException, IOException {
+        SAXParserFactory spf = SAXParserFactory.newInstance();
+        SAXParser p = spf.newSAXParser();
+
+        CustomMapXMLHandler handler = new CustomMapXMLHandler();
+        p.parse(filename, handler);
+        continents = handler.getCustomMap();
     }
 }
