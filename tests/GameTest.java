@@ -2,6 +2,7 @@ import org.junit.*;
 import org.xml.sax.SAXException;
 
 import javax.xml.parsers.ParserConfigurationException;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.*;
 
@@ -244,7 +245,7 @@ public class GameTest {
         gFSave.saveActionLog();
         gFLoad.loadActionLog();
 
-        assertEquals(gSave.getActionLog.getText(), gLoad.getActionLog.getText());
+        assertEquals(gFSave.getActionLog().getText(), gFLoad.getActionLog().getText());
     }
     /**
      * Test importing a custom map.
