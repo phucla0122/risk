@@ -12,7 +12,7 @@ public class Game implements Serializable {
     private List<Player> activePlayers;
     private Map<String, Continent> continents;
     private Player currentPlayer;
-    private ArrayList<GameView> gameViews;
+    private final ArrayList<GameView> gameViews;
     private boolean isFirstTurn;
 
     public enum Status {ATTACK, PLACE, DISABLE, DONE, PASS}
@@ -516,7 +516,6 @@ public class Game implements Serializable {
             activePlayers = risk.getActivePlayers();
             continents = risk.getContinents();
             isFirstTurn = risk.getIsFirstTurn();
-            status = risk.getStatus();
             return true;
         } catch (ClassNotFoundException | IOException e) {
             e.printStackTrace();
@@ -598,12 +597,6 @@ public class Game implements Serializable {
         gameViews.add(view);
     }
 
-    /**
-     *
-     */
-    public ArrayList<GameView> getGameView(){
-        return gameViews;
-    }
     /**
      * Get the status of the game if it is the first turn.
      * @return true if it is first turn and false other wise

@@ -16,13 +16,12 @@ import java.util.List;
  */
 public class GameFrame extends JFrame implements GameView{
     private final String[] options = {"OK"};
-    private JTextArea actionLog;
+    private final JTextArea actionLog;
     private final DefaultMutableTreeNode mapList;
     private final JTree map;
     private final JLabel playerTurn;
     private final DefaultListModel<String> leaderBoardList;
     private final JButton attack,move,done,place;
-    private JList<String> leaderBoard;
 
     /**
      * constructor of the GameFrame that initializes the view of the GameModel
@@ -114,7 +113,7 @@ public class GameFrame extends JFrame implements GameView{
         for (Player player : activePlayers) {
             leaderBoardList.addElement(player.getName() + " owns " + player.getAllLandOwnedSize() + " territories");
         }
-        leaderBoard = new JList<>(leaderBoardList);
+        JList<String> leaderBoard = new JList<>(leaderBoardList);
         JLabel leaderBoardLabel = new JLabel("Leaderboard");
         leaderBoardLabel.setVerticalAlignment(JLabel.BOTTOM);
 
@@ -191,8 +190,7 @@ public class GameFrame extends JFrame implements GameView{
        List<Player> activePlayers = game.getActivePlayers();
        Game.Status status = game.getStatus();
 
-        resetMap(continents);
-        resetLeaderBoard(game);
+        resetMapAndLeaderBoard(continents, activePlayers);
         switch (status) {
             case PLACE:
                 place.setEnabled(false);
@@ -202,7 +200,7 @@ public class GameFrame extends JFrame implements GameView{
                 break;
 
             case ATTACK:
-                handleAttack(activePlayers,currentPlayer);
+                checkForWinner(activePlayers,currentPlayer);
                 break;
 
             case DONE:
@@ -233,12 +231,13 @@ public class GameFrame extends JFrame implements GameView{
 
     /**
      * Updates the map as the game progresses (IE: attack/move territories losing/gaining armies)
+     * Updates the leaderboard as the game progresses (IE: attack territory and conquer the land)
      *
      * @param continents a list of continents on the map
      *
      * @author Robell Gabriel and Phuc La
      */
-    private void resetMap(Map<String, Continent> continents) {
+    private void resetMapAndLeaderBoard(Map<String, Continent> continents, List<Player> activePlayers) {
         mapList.removeAllChildren();
         for (String id : continents.keySet()) {
             DefaultMutableTreeNode contList = new DefaultMutableTreeNode(continents.get(id).getName());
@@ -253,22 +252,16 @@ public class GameFrame extends JFrame implements GameView{
         for (int i = 0; i < map.getRowCount(); i++) {
             map.expandRow(i);
         }
+
+        leaderBoardList.removeAllElements();
+        List<Player> sortedPlayer = new ArrayList<>(activePlayers);
+        sortedPlayer.sort(Comparator.comparing(Player::getAllLandOwnedSize).reversed());
+        for (Player player : sortedPlayer) {
+            leaderBoardList.addElement(player.getName() + " owns " + player.getAllLandOwnedSize() + " territories");
+        }
     }
 
     /**
-     * This method will reset the leaderboard when the player load old game.
-     * @param game is the game object of the loaded match
-     */
-    private void resetLeaderBoard(Game game){
-        List<Player> activePlayers = game.getActivePlayers();
-        leaderBoardList.clear();
-        for (Player player : activePlayers) {
-            leaderBoardList.addElement(player.getName() + " owns " + player.getAllLandOwnedSize() + " territories");
-        }
-        leaderBoard = new JList<>(leaderBoardList);
-    }
-    /**
-     * Updates the leaderboard as the game progresses (IE: attack territory and conquer the land)
      * Checks if there's a winner
      *
      * @param activePlayers list of all players in game
@@ -276,13 +269,7 @@ public class GameFrame extends JFrame implements GameView{
      *
      * @author Robell Gabriel
      */
-    private void handleAttack(List<Player> activePlayers,Player currentPlayer){
-        leaderBoardList.removeAllElements();
-        List<Player> sortedPlayer = new ArrayList<>(activePlayers);
-        sortedPlayer.sort(Comparator.comparing(Player::getAllLandOwnedSize).reversed());
-        for (Player player : sortedPlayer) {
-            leaderBoardList.addElement(player.getName() + " owns " + player.getAllLandOwnedSize() + " territories");
-        }
+    private void checkForWinner(List<Player> activePlayers, Player currentPlayer){
         if (activePlayers.size() == 1) {
             JOptionPane.showOptionDialog(this, "Congratulations " + currentPlayer.getName() + ". You are the winner!!!", "Winner",
                     JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE,
@@ -372,12 +359,13 @@ public class GameFrame extends JFrame implements GameView{
 
     /**
      * This method load the action log of the loaded game file to the action log text area.
-     * @throws FileNotFoundException
+     * @throws FileNotFoundException if the file cannot be loaded
      */
     public void loadActionLog() throws FileNotFoundException {
         File file = new File("Actionlog.sav");
         Scanner sc = new Scanner(file);
-        actionLog.removeAll();
+        actionLog.selectAll();
+        actionLog.replaceSelection("");
         while(sc.hasNextLine()){
             String act = sc.nextLine();
             printLine(act);
