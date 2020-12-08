@@ -236,7 +236,7 @@ public class GameTest {
         gSave.saveGame();
         gLoad.loadGame();
 
-        assertEquals(gSave.toString(), gLoad.toString());
+        assertEquals(gSave, gLoad);
 
         GameFrame gFSave = new GameFrame();
         GameFrame gFLoad = new GameFrame();

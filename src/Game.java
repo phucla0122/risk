@@ -523,4 +523,14 @@ public class Game implements Serializable {
         p.parse(filename, handler);
         continents = handler.getCustomMap();
     }
+
+    @Override
+    public boolean equals(Object o) {
+        if (!(o instanceof Game)) {
+            return false;
+        }
+        Game g = (Game)o;
+        return g.activePlayers.equals(this.activePlayers);
+    }
+
 }

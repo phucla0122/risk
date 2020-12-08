@@ -161,4 +161,13 @@ public class Player implements Serializable {
         return AI;
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (!(o instanceof Player)) {
+            return false;
+        }
+        Player p = (Player)o;
+        return p.name.equals(this.name);
+    }
+
 }
