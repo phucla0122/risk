@@ -176,7 +176,6 @@ public class GameTest {
     }
 
     @Test
-
     public void testAttackWon() {
         Player player1 = game.getActivePlayers().get(0);
         Player player2 = game.getActivePlayers().get(1);
@@ -215,11 +214,11 @@ public class GameTest {
     }
 
     /**
-     * Test save and load features for GameModel and ActionLog
+     * Test save and load features for GameModel
      *
      * @throws IOException if the GameModelfile is invalid
      * @throws ClassNotFoundException if adding objects from GameModelfile is invalid
-     * @throws FileNotFoundException if actionlog file doesnt exist
+     * @throws FileNotFoundException if game file doesnt exist
      *
      * @author Robell Gabriel
      */
@@ -237,16 +236,8 @@ public class GameTest {
         gLoad.loadGame();
 
         assertEquals(gSave, gLoad);
-
-        GameFrame gFSave = new GameFrame();
-        GameFrame gFLoad = new GameFrame();
-
-        gFSave.printLine("Testing");
-        gFSave.saveActionLog();
-        gFLoad.loadActionLog();
-
-        assertEquals(gFSave.getActionLog().getText(), gFLoad.getActionLog().getText());
     }
+
     /**
      * Test importing a custom map.
      * @throws IOException If the file cannot be read

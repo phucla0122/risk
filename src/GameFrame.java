@@ -63,9 +63,12 @@ public class GameFrame extends JFrame implements GameView{
                     e.printStackTrace();
                 }
             }else if (result == JOptionPane.CANCEL_OPTION){
-                try{
+                try {
                     JFileChooser file = new JFileChooser();
                     file.showSaveDialog(null);
+                    if (file.getSelectedFile() == null) {
+                        continue;
+                    }
                     game.importCustomMap(file.getSelectedFile().getParent());
                     welcomePlayers(game);
                     break;
