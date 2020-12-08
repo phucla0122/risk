@@ -82,11 +82,8 @@ public class Game {
         } else {
             printLine("some how u messed up tough luck");
         }
-        if (isFirstTurn && currentPlayer.isAI()) {
             done();
-        } else {
-            passTurn();
-        }
+
     }
 
     /**
@@ -185,23 +182,16 @@ public class Game {
      * Initiates AI turn if necessary
      */
     public void done() {
-
+        status = Status.DONE;
         isFirstTurn = false;
-        passTurn();
+        printLine(currentPlayer.getName() + " has ended their turn\n");
+        currentPlayer = activePlayers.get((activePlayers.indexOf(currentPlayer) + 1) % activePlayers.size());
+        updateView();
         while (currentPlayer.isAI() && activePlayers.size() > 1) {
             AITurn();
         }
     }
 
-    /**
-     * moves the turn over to the next player
-     */
-    private void passTurn() {
-        status = Status.DONE;
-        printLine(currentPlayer.getName() + " has ended their turn\n");
-        currentPlayer = activePlayers.get((activePlayers.indexOf(currentPlayer) + 1) % activePlayers.size());
-        updateView();
-    }
 
     /**
      * Roll dice the specified number of times and return the list of results
@@ -411,7 +401,6 @@ public class Game {
      */
     public void AITurn() {
         status = Status.DISABLE;
-        updateView();
         Random rnd = new Random();
 
         // Place phase
@@ -485,11 +474,7 @@ public class Game {
             }
             rng = rnd.nextInt(AI_MAX);
         }
-        if (isFirstTurn) {
-            done();
-        } else {
-            passTurn();
-        }
+        done();
     }
 
     /**
